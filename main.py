@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 import time
 import math
+from feature_1 import process_gestures
 
 WIDTH, HEIGHT = 1280, 720
 SMOOTHING = 0.15
@@ -94,6 +95,11 @@ with HandLandmarker.create_from_options(options) as landmarker:
 
         if latest_result and latest_result.hand_landmarks:
             for landmarks in latest_result.hand_landmarks:
+                final_img = frame.copy()
+                canvas, gesture_msg = process_gestures(landmarks, canvas, final_img)
+                if gesture_msg:
+                    cv2.putText(frame, gesture_msg, (500, 350),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
                 ix = int(landmarks[8].x * WIDTH)
                 iy = int(landmarks[8].y * HEIGHT)
                 tx = int(landmarks[4].x * WIDTH)
